@@ -1,0 +1,9 @@
+dnspython
+environs
+flask
+gunicorn
+mongoengine
+psycopg2
+pyTelegramBotApi
+requests==2.25.1
+sqlalchemy==1.4.7
