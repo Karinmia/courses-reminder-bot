@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, Boolean
 
-from database import Base
+from database import Base, engine
 
 
 class User(Base):
@@ -20,3 +20,6 @@ class User(Base):
         self.first_name = first_name
         self.last_name = last_name
         self.state = state
+
+
+Base.metadata.create_all(engine)

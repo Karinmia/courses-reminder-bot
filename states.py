@@ -21,14 +21,10 @@ def login_state(message, user, is_entry=False):
 
 def main_menu_state(message, user, is_entry=False):
     if is_entry:
-        print("is_entry")
-        print(message.text)
         bot.send_message(
             message.chat.id, DICTIONARY['ru']['mainmenu_msg'],
             reply_markup=get_main_menu_keyboard(language='ru'))
     else:
-        print("NOT is_entry")
-        print(message.text)
         if message.text == DICTIONARY['ru']['my_events_btn']:
             bot.send_message(message.chat.id, "Тут будут ивенты, на которые ты подпишешься")
             return True, 'main_menu_state'
