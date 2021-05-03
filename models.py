@@ -1,4 +1,8 @@
-from sqlalchemy import Column, String, Integer, Boolean
+from datetime import datetime
+
+from sqlalchemy import Column, String, Text, Integer, DateTime, ForeignKey
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.orm import relationship, backref
 
 from database import Base, engine
 
@@ -7,12 +11,14 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
-    first_name = Column('first_name', String(32))
-    last_name = Column('last_name', String(32))
-    username = Column('username', String(64))
-    in_stock = Column('in_stock', Boolean)
-    state = Column('state', String(64))
+    user_id = Column(Integer, nullable=False)
+    first_name = Column('first_name', Text)
+    last_name = Column('last_name', Text)
+    username = Column('username', Text, nullable=False)
+    state = Column('state', Text, nullable=False)
+    created_at = Column('created_on', DateTime, default=datetime.now)
+    last_updated = Column('last_updated', DateTime, default=datetime.now, onupdate=datetime.now)
+    subscriptions = relationship("UserSubscription", cascade="all,delete", backref="user", lazy='dynamic')
 
     def __init__(self, user_id, username, first_name, last_name, state):
         self.user_id = user_id
@@ -21,5 +27,27 @@ class User(Base):
         self.last_name = last_name
         self.state = state
 
+    def __repr__(self):
+        return f"<User(username='{self.username}')>"
 
+    def __str__(self):
+        return self.username
+
+
+class UserSubscription(Base):
+    __tablename__ = 'subscriptions'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    name = Column(Text, nullable=False)
+    tags = Column(ARRAY(String(64)), nullable=True)
+
+    def __repr__(self):
+        return f"<UserSubscription(name='{self.name}')>"
+
+    def __str__(self):
+        return self.name
+
+
+# Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)

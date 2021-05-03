@@ -12,7 +12,8 @@ def login_state(message, user, is_entry=False):
     if is_entry:
         bot.send_message(
             message.chat.id,
-            DICTIONARY['ru']['welcome_msg'].format(user.first_name)
+            DICTIONARY['ru']['welcome_msg'].format(user.first_name),
+            reply_markup=categories_inline_keyboard()
         )
     else:
         return True, 'main_menu_state'
