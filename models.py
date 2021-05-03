@@ -15,6 +15,7 @@ class User(Base):
     first_name = Column('first_name', Text)
     last_name = Column('last_name', Text)
     username = Column('username', Text, nullable=False)
+    city = Column(String(100))
     state = Column('state', Text, nullable=False)
     created_at = Column('created_on', DateTime, default=datetime.now)
     last_updated = Column('last_updated', DateTime, default=datetime.now, onupdate=datetime.now)

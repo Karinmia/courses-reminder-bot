@@ -1,6 +1,6 @@
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
-from config import CATEGORIES
+from enums import CATEGORIES
 from languages import DICTIONARY
 
 
@@ -11,24 +11,24 @@ def get_main_menu_keyboard(language='ru'):
     return keyboard
 
 
-def categories_keyboard(language='ru', categories=[]):
-    """Just an example keyboard"""
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add('python', 'js', 'PHP')
-    keyboard.add('C#', 'Java', 'QA')
-    keyboard.add('Data Science', 'Embedded')
-    return keyboard
-
-
 def categories_inline_keyboard(language='ru', categories=CATEGORIES):
     keyboard = InlineKeyboardMarkup()
+
+    keyboard.add(InlineKeyboardButton(text=DICTIONARY[language]['done_btn'], callback_data="save_categories"))
 
     # split categories list into smaller lists (with lenght = 3)
     chunks = [CATEGORIES[x:x + 3] for x in range(0, len(CATEGORIES), 3)]
     for chunk in chunks:
         buttons = []
         for btn in chunk:
-            buttons.append(InlineKeyboardButton(btn, callback_data=btn))
+            buttons.append(InlineKeyboardButton(btn, callback_data=f"{btn}_on"))
+
         keyboard.add(*buttons)
 
+    return keyboard
+
+
+def get_skip_keyboard(language='ru'):
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(DICTIONARY[language]['skip_btn'])
     return keyboard

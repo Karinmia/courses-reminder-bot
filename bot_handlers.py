@@ -46,6 +46,22 @@ def handle_message(message):
         print(e)
 
 
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    user = session.query(User).filter_by(user_id=call.message.chat.id).first()
+
+    if not call.message:
+        bot.delete_message(call.message.chat.id, call.message.message_id)
+        user.state = 'main_menu_state'
+        session.commit()
+
+    if call.data == "save_categories":
+        user.state = 'set_city_state'
+        session.commit()
+
+    get_state_and_process(call.message, user, True)
+
+
 if __name__ == '__main__':
     # bot.remove_webhook()
     # sleep(1)
