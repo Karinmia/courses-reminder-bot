@@ -13,6 +13,16 @@ def get_main_menu_keyboard(language='ru'):
     return keyboard
 
 
+def get_settings_menu_keyboard(language='ru'):
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(
+        DICTIONARY[language]['settings_categories_btn'],
+        DICTIONARY[language]['settings_city_btn']
+    )
+    keyboard.add(DICTIONARY[language]['back_button'])
+    return keyboard
+
+
 def categories_inline_keyboard(language='ru', categories=CATEGORIES, user=None):
     keyboard = InlineKeyboardMarkup()
 
