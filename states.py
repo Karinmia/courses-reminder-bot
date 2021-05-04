@@ -78,12 +78,18 @@ def settings_menu_state(message, user, is_entry=False):
 
 def change_city_state(message, user, is_entry=False):
     if is_entry:
-        bot.send_message(message.chat.id, "Введи название города:")
+        bot.send_message(
+            message.chat.id, "Введи название города:",
+            reply_markup=get_back_keyboard(language='ru')
+        )
     else:
-        # TODO: check if given city exists in Ukraine
-        user.city = message.text
-        session.commit()
-        bot.send_message(message.chat.id, "Город успешно обновлен")
-        return True, 'main_menu_state'
+        if message.text == DICTIONARY['ru']['back_btn']:
+            return True, 'settings_menu_state'
+        else:
+            # TODO: check if given city exists in Ukraine
+            user.city = message.text
+            session.commit()
+            bot.send_message(message.chat.id, "Город успешно обновлен")
+            return True, 'main_menu_state'
 
     return False, ''

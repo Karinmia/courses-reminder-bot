@@ -18,7 +18,7 @@ DICTIONARY = {
 
         'done_btn': "Готово",
         'skip_btn': 'Пропустить',
-        'back_button': '↩️ Назад',
+        'back_btn': '↩️ Назад',
         'no_button': 'Воспользуйтесь, пожалуйста, клавиатурой',
         'submit_btn': '✅ Подтвердить',
         'discard_order_btn': '❌ Отмена',

@@ -79,8 +79,6 @@ def callback_inline(call):
         # get_state_and_process(call.message, user, True)
 
 
-
-
 if __name__ == '__main__':
     # bot.remove_webhook()
     # sleep(1)
