@@ -1,7 +1,9 @@
 from bot_object import bot
-from models import User
+from models import User, UserSubscription
 from database import session
 from state_handler import get_state_and_process
+
+from keyboards import *
 
 
 @bot.message_handler(commands=['start'])
@@ -54,12 +56,30 @@ def callback_inline(call):
         bot.delete_message(call.message.chat.id, call.message.message_id)
         user.state = 'main_menu_state'
         session.commit()
+        get_state_and_process(call.message, user, True)
 
     if call.data == "save_categories":
         user.state = 'set_city_state'
         session.commit()
+        get_state_and_process(call.message, user, True)
+    else:
+        subscriptions = user.subscriptions.all()
+        subscription = session.query(UserSubscription).filter(UserSubscription.name == call.data.replace("_on", "")).first()
+        # subscriptions = UserSubscription(name=call.data.replace("_on", ""))
+        if subscription in subscriptions:
+            user.subscriptions.remove(subscription)
+        else:
+            user.subscriptions.append(subscription)
+        session.commit()
+        bot.edit_message_reply_markup(
+            call.message.chat.id,
+            call.message.message_id,
+            call.message.message_id,
+            reply_markup=categories_inline_keyboard(user=user)
+        )
+        # get_state_and_process(call.message, user, True)
 
-    get_state_and_process(call.message, user, True)
+
 
 
 if __name__ == '__main__':

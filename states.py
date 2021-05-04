@@ -13,7 +13,7 @@ def login_state(message, user, is_entry=False):
         bot.send_message(
             message.chat.id,
             DICTIONARY['ru']['welcome_msg'].format(user.first_name),
-            reply_markup=categories_inline_keyboard()
+            reply_markup=categories_inline_keyboard(user=user)
         )
     else:
         return True, 'main_menu_state'
