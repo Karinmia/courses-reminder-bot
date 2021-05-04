@@ -63,13 +63,12 @@ def callback_inline(call):
         session.commit()
         get_state_and_process(call.message, user, True)
     else:
-        subscriptions = user.subscriptions.all()
-        subscription = session.query(UserSubscription).filter(UserSubscription.name == call.data.replace("_on", "")).first()
-        # subscriptions = UserSubscription(name=call.data.replace("_on", ""))
-        if subscription in subscriptions:
-            user.subscriptions.remove(subscription)
+        subscription = session.query(UserSubscription).filter_by(name=call.data.replace("_on", ""), user_id=user.id).first()
+        if not subscription:
+            subscription = UserSubscription(name=call.data.replace("_on", ""), user_id=user.id)
+            session.add(subscription)
         else:
-            user.subscriptions.append(subscription)
+            session.delete(subscription)
         session.commit()
         bot.edit_message_reply_markup(
             call.message.chat.id,
