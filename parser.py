@@ -35,7 +35,7 @@ def parser(url):
 def parce_events(html):
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.find_all('article', class_='b-postcard')
-    # events = []
+    events = []
     for item in items:
         url = item.find('h2', class_='title')
         id_site = str(url.find('a').get('href')).split('/')[4]
@@ -66,10 +66,8 @@ def parce_events(html):
         # print(f'id_site: {id_site}')
         # print()
 
-        # event = Event(id_site=id_site, name=name, date=date, price=price, type=type, description=description, tags=tags)
-        session.execute(insert(Event).values({'id_site': id_site, 'name': name, 'date': date, 'price': price, 'type': type, 'description': description, 'tags': tags}).on_conflict_do_nothing())
-        # session.execute(insert(Event).values(vars(event)).on_conflict_do_nothing())
-        # events.append(event)
+        events.append({'id_site': id_site, 'name': name, 'date': date, 'price': price, 'type': type, 'description': description, 'tags': tags})
+    session.execute(insert(Event).values(events).on_conflict_do_nothing())
     session.commit()
 
 
