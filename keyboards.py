@@ -2,8 +2,6 @@ from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeybo
 
 from enums import CATEGORIES
 from languages import DICTIONARY
-from database import session
-from models import UserSubscription
 
 
 def get_main_menu_keyboard(language='ru'):
