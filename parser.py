@@ -1,5 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
+from sqlalchemy.dialects.postgresql import insert
+
+from models import User, UserSubscription, Event
+from database import session
+# from bot_object import bot
 
 URL = 'https://dou.ua/calendar/'
 HEADERS = {
@@ -30,7 +35,10 @@ def parser(url):
 def parce_events(html):
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.find_all('article', class_='b-postcard')
+    events = []
     for item in items:
+        url = item.find('h2', class_='title')
+        id_site = str(url.find('a').get('href')).split('/')[4]
         name = item.find('a').get_text().rstrip().lstrip()
         date = item.find('span', class_='date').get_text()
         block = item.find('div', class_='when-and-where')
@@ -45,14 +53,22 @@ def parce_events(html):
             tags = block.get_text().replace(block.find('span').get_text(), '').rstrip().lstrip()
         else:
             tags = block.get_text().rstrip().lstrip()
-        print(f'name: {name}')
-        print(f'date: {date}')
-        print(f'price: {price}')
-        print(f'type: {type}')
-        print(f'description: {description}')
-        print(f'tags: {tags}')
-        print()
 
+        tags = str(tags).split(', ')
+        type = str(type).split(', ')
+
+        # print(f'name: {name}')
+        # print(f'date: {date}')
+        # print(f'price: {price}')
+        # print(f'type: {type}')
+        # print(f'description: {description}')
+        # print(f'tags: {tags}')
+        # print(f'id_site: {id_site}')
+        # print()
+
+        events.append({'id_site': id_site, 'name': name, 'date': date, 'price': price, 'type': type, 'description': description, 'tags': tags})
+    session.execute(insert(Event).values(events).on_conflict_do_nothing())
+    session.commit()
 
 
 parser(URL)

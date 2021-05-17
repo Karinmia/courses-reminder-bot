@@ -50,6 +50,35 @@ class UserSubscription(Base):
         return self.name
 
 
+class Event(Base):
+    __tablename__ = 'events'
+
+    id = Column(Integer, primary_key=True)
+    id_site = Column(Integer, unique=True)
+    name = Column(Text)
+    # date = Column(DateTime, nullable=True)
+    date = Column(Text, nullable=True)
+    price = Column(Text, nullable=True)
+    type = Column(ARRAY(String(64)), nullable=True)
+    description = Column(Text, nullable=True)
+    tags = Column(ARRAY(String(64)), nullable=True)
+
+    def __str__(self):
+        return self.id_site
+
+
+
+class UserEvent(Base):
+    __tablename__ = 'userevents'
+
+    id = Column(Integer, primary_key=True)
+    event_id = Column(Integer, ForeignKey(Event.id))
+    event = relationship(Event)
+    user_id = Column(Integer, ForeignKey(User.id))
+    user = relationship(User)
+
+
+
 # Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
 
