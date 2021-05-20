@@ -20,6 +20,7 @@ class User(Base):
     created_at = Column('created_on', DateTime, default=datetime.now)
     last_updated = Column('last_updated', DateTime, default=datetime.now, onupdate=datetime.now)
     subscriptions = relationship("UserSubscription", cascade="all,delete", backref="user", lazy='dynamic')
+    events = relationship("UserEvent", cascade="all,delete", backref="user", lazy='dynamic')
 
     def __init__(self, user_id, username, first_name, last_name, state):
         self.user_id = user_id
@@ -72,9 +73,9 @@ class UserEvent(Base):
 
     id = Column(Integer, primary_key=True)
     event_id = Column(Integer, ForeignKey(Event.id))
-    event = relationship(Event)
+    event = relationship(Event, back_populates='subscribed_users')
     user_id = Column(Integer, ForeignKey(User.id))
-    user = relationship(User)
+    user = relationship(User, back_populates='events')
 
 
 # Base.metadata.drop_all(engine)
