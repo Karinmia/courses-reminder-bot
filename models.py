@@ -67,9 +67,8 @@ class Event(Base):
         return self.id_site
 
 
-
 class UserEvent(Base):
-    __tablename__ = 'userevents'
+    __tablename__ = 'user_events'
 
     id = Column(Integer, primary_key=True)
     event_id = Column(Integer, ForeignKey(Event.id))
@@ -78,7 +77,5 @@ class UserEvent(Base):
     user = relationship(User)
 
 
-
-# Base.metadata.drop_all(engine)
+Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
-
