@@ -6,6 +6,7 @@ from database import session
 from models import User
 from keyboards import *
 from languages import DICTIONARY
+from utils import get_events_from_db_for_user, format_events_as_message
 
 
 def login_state(message, user, is_entry=False):
@@ -30,8 +31,13 @@ def main_menu_state(message, user, is_entry=False):
             bot.send_message(message.chat.id, "Тут будут ивенты, на которые ты подпишешься")
             return True, 'main_menu_state'
         elif message.text == DICTIONARY['ru']['settings_btn']:
-            # bot.send_message(message.chat.id, "Тут будут твои настройки")
             return True, 'settings_menu_state'
+        elif message.text == DICTIONARY['ru']['get_events_btn']:
+            # send message with list of events
+            events = get_events_from_db_for_user(user)
+            events_message = format_events_as_message(events)
+            bot.send_message(message.chat.id, events_message, parse_mode='Markdown')
+            return True, 'main_menu_state'
         else:
             bot.send_message(message.chat.id, DICTIONARY['ru']['no_button'])
 
