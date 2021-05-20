@@ -44,24 +44,24 @@ def parse_events(html):
     for item in items:
         url = item.find('h2', class_='title')
         id_site = str(url.find('a').get('href')).split('/')[4]
-        name = item.find('a').get_text().rstrip().lstrip()
+        name = item.find('a').get_text().strip()
         # cleaned_ = cleaner.clean_html(lxml_fromstring(name))
         # name = cleaned_.text_content()
 
         date = item.find('span', class_='date').get_text()
         block = item.find('div', class_='when-and-where')
         if len(block.find_all('span')) == 2:
-            price = block.find_all('span')[1].get_text().rstrip().lstrip()
+            price = block.find_all('span')[1].get_text().strip()
         else:
             price = ''
-        event_type = block.get_text().replace(date, '').replace(price, '').rstrip().lstrip()
-        description = item.find('p', class_='b-typo').get_text().rstrip().lstrip()
+        event_type = block.get_text().replace(date, '').replace(price, '').strip()
+        description = item.find('p', class_='b-typo').get_text().strip()
 
         block = item.find('div', class_='more')
         if block.find('span') is not None:
-            tags = block.get_text().replace(block.find('span').get_text(), '').rstrip().lstrip()
+            tags = block.get_text().replace(block.find('span').get_text(), '').strip()
         else:
-            tags = block.get_text().rstrip().lstrip()
+            tags = block.get_text().strip()
 
         tags = str(tags).split(', ')
         event_type = str(event_type).split(', ')
@@ -87,11 +87,9 @@ parser(URL)
 def delete_event():
     events = session.query(Event).all()
     for event in events:
-        html = get_html(URL+str(event.id_site))
+        html = get_html(URL + str(event.id_site))
         if html.status_code == 404:
             print(f'delete event: {event.id_site}')
             session.delete(event)
 
-
 # delete_event()
-
