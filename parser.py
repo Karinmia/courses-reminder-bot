@@ -82,3 +82,16 @@ def parce_events(html):
 
 
 parser(URL)
+
+
+def delete_event():
+    events = session.query(Event).all()
+    for event in events:
+        html = get_html(URL+str(event.id_site))
+        if html.status_code == 404:
+            print(f'delete event: {event.id_site}')
+            session.delete(event)
+
+
+# delete_event()
+
