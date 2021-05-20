@@ -1,10 +1,9 @@
+beautifulsoup4
 dnspython
 environs
 flask
 gunicorn
-mongoengine
-psycopg2-binary
+psycopg2-binary==2.8.6
 pyTelegramBotAPI
 requests==2.25.1
-sqlalchemy==1.4.7
-beautifulsoup4
+sqlalchemy==1.4.15

@@ -2,14 +2,22 @@ from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeybo
 
 from enums import CATEGORIES
 from languages import DICTIONARY
-from database import session
-from models import UserSubscription
 
 
 def get_main_menu_keyboard(language='ru'):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(DICTIONARY[language]['my_events_btn'])
     keyboard.add(DICTIONARY[language]['settings_btn'])
+    return keyboard
+
+
+def get_settings_menu_keyboard(language='ru'):
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(
+        DICTIONARY[language]['settings_categories_btn'],
+        DICTIONARY[language]['settings_city_btn']
+    )
+    keyboard.add(DICTIONARY[language]['back_btn'])
     return keyboard
 
 
@@ -39,4 +47,10 @@ def categories_inline_keyboard(language='ru', categories=CATEGORIES, user=None):
 def get_skip_keyboard(language='ru'):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(DICTIONARY[language]['skip_btn'])
+    return keyboard
+
+
+def get_back_keyboard(language='ru'):
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(DICTIONARY[language]['back_btn'])
     return keyboard

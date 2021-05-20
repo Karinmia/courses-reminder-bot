@@ -1,5 +1,5 @@
-import requests
 from bs4 import BeautifulSoup
+import requests
 from sqlalchemy.dialects.postgresql import insert
 
 from models import User, UserSubscription, Event
@@ -35,6 +35,7 @@ def parser(url):
 def parce_events(html):
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.find_all('article', class_='b-postcard')
+    
     events = []
     for item in items:
         url = item.find('h2', class_='title')
@@ -46,7 +47,7 @@ def parce_events(html):
             price = block.find_all('span')[1].get_text().rstrip().lstrip()
         else:
             price = ''
-        type = block.get_text().replace(date, '').replace(price, '').rstrip().lstrip()
+        event_type = block.get_text().replace(date, '').replace(price, '').rstrip().lstrip()
         description = item.find('p', class_='b-typo').get_text().rstrip().lstrip()
         block = item.find('div', class_='more')
         if block.find('span') is not None:
@@ -55,18 +56,27 @@ def parce_events(html):
             tags = block.get_text().rstrip().lstrip()
 
         tags = str(tags).split(', ')
-        type = str(type).split(', ')
+        event_type = str(event_type).split(', ')
 
         # print(f'name: {name}')
         # print(f'date: {date}')
         # print(f'price: {price}')
-        # print(f'type: {type}')
+        # print(f'event_type: {event_type}')
         # print(f'description: {description}')
         # print(f'tags: {tags}')
         # print(f'id_site: {id_site}')
-        # print()
 
-        events.append({'id_site': id_site, 'name': name, 'date': date, 'price': price, 'type': type, 'description': description, 'tags': tags})
+        events.append(
+            {
+                'id_site': id_site, 
+                'name': name, 
+                'date': date, 
+                'price': price, 
+                'type': event_type,
+                'description': description, 
+                'tags': tags
+            })
+        
     session.execute(insert(Event).values(events).on_conflict_do_nothing())
     session.commit()
 

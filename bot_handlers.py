@@ -1,15 +1,18 @@
+import logging
+
 from bot_object import bot
-from models import User, UserSubscription
 from database import session
+from keyboards import *
+from models import User, UserSubscription
 from state_handler import get_state_and_process
 
-from keyboards import *
+logger = logging.getLogger(__name__)
 
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     try:
-        print(f"/start | user_id: {message.from_user.id}")
+        logger.debug(f"/start | user_id: {message.from_user.id}")
         user = session.query(User).filter_by(user_id=message.from_user.id).first()
 
         if user is None:
@@ -28,7 +31,7 @@ def send_welcome(message):
 
         get_state_and_process(message, user, True)
     except Exception as e:
-        print(e)
+        logger.error(e, exc_info=True)
 
 
 @bot.message_handler(func=lambda message: True)
@@ -45,7 +48,7 @@ def handle_message(message):
             session.commit()
         get_state_and_process(message, user)
     except Exception as e:
-        print(e)
+        logger.error(e, exc_info=True)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -77,8 +80,6 @@ def callback_inline(call):
             reply_markup=categories_inline_keyboard(user=user)
         )
         # get_state_and_process(call.message, user, True)
-
-
 
 
 if __name__ == '__main__':
