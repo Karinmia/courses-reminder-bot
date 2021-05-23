@@ -22,13 +22,13 @@ def get_settings_menu_keyboard(language='ru'):
     return keyboard
 
 
-def categories_inline_keyboard(language='ru', categories=CATEGORIES, user=None):
+def categories_inline_keyboard(categories=CATEGORIES, user=None, language='ru'):
     keyboard = InlineKeyboardMarkup()
 
     keyboard.add(InlineKeyboardButton(text=DICTIONARY[language]['done_btn'], callback_data="save_categories"))
 
     # split categories list into smaller lists (with lenght = 3)
-    chunks = [CATEGORIES[x:x + 3] for x in range(0, len(CATEGORIES), 3)]
+    chunks = [categories[x:x + 3] for x in range(0, len(categories), 3)]
 
     subscriptions_name = [s.name for s in user.subscriptions.all()]
 
@@ -39,6 +39,27 @@ def categories_inline_keyboard(language='ru', categories=CATEGORIES, user=None):
                 buttons.append(InlineKeyboardButton(f"{btn} ✅ ", callback_data=f"{btn}_on"))
             else:
                 buttons.append(InlineKeyboardButton(btn, callback_data=f"{btn}_on"))
+
+        keyboard.add(*buttons)
+
+    return keyboard
+
+
+def events_inline_keyboard(events=[], user=None, language='ru'):
+    keyboard = InlineKeyboardMarkup(row_width=5)
+
+    # split events list into smaller lists (with lenght = 5)
+    chunks = [events[x:x + 5] for x in range(0, len(events), 5)]
+
+    user_events_ids = [obj.id for obj in user.events.all()]
+
+    for chunk in chunks:
+        buttons = []
+        for i, event_id in enumerate(chunk):  # event_id is event's primary key (id)
+            if event_id in user_events_ids:
+                buttons.append(InlineKeyboardButton(f"{i+1} ✅ ", callback_data=f"sub_{event_id}"))
+            else:
+                buttons.append(InlineKeyboardButton(i+1, callback_data=f"sub_{event_id}"))
 
         keyboard.add(*buttons)
 

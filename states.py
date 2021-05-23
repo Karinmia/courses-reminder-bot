@@ -37,7 +37,11 @@ def main_menu_state(message, user, is_entry=False):
             events = get_events_from_db_for_user(user)
             events_message = format_events_as_message(events)
             # TODO: add inline keyboard so users could subscribe to the specific event
-            bot.send_message(message.chat.id, events_message, parse_mode='Markdown')
+            events_ids = [obj.id for obj in events]
+            bot.send_message(
+                message.chat.id, text=events_message, parse_mode='Markdown',
+                reply_markup=events_inline_keyboard(events_ids, user)
+            )
             return True, 'main_menu_state'
         else:
             bot.send_message(message.chat.id, DICTIONARY['ru']['no_button'])
