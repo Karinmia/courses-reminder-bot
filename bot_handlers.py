@@ -84,8 +84,8 @@ def callback_inline(call):
                 call.message.chat.id,
                 text="Вы успешно подписались на событие! Мы напомним о нем за день до начала."
             )
-    else:
-        sub_name = call.data.replace("_on", "")
+    elif call.data.startswith('category_'):
+        sub_name = call.data.replace("category_", "")
         subscription = session.query(UserSubscription).filter_by(name=sub_name, user_id=user.id).first()
         if not subscription:
             subscription = UserSubscription(name=sub_name, user_id=user.id)
@@ -100,6 +100,8 @@ def callback_inline(call):
             reply_markup=categories_inline_keyboard(user=user)
         )
         # get_state_and_process(call.message, user, True)
+    else:
+        logger.warning(f"Invalid call.data: {call.data}\nUser: id={user.id} username={user.username}")
 
 
 def start_bot_handler():

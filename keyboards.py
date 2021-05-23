@@ -36,9 +36,9 @@ def categories_inline_keyboard(categories=CATEGORIES, user=None, language='ru'):
         buttons = []
         for btn in chunk:
             if btn in subscriptions_name:
-                buttons.append(InlineKeyboardButton(f"{btn} ✅ ", callback_data=f"{btn}_on"))
+                buttons.append(InlineKeyboardButton(f"{btn} ✅ ", callback_data=f"category_{btn}"))
             else:
-                buttons.append(InlineKeyboardButton(btn, callback_data=f"{btn}_on"))
+                buttons.append(InlineKeyboardButton(btn, callback_data=f"category_{btn}"))
 
         keyboard.add(*buttons)
 

@@ -22,7 +22,7 @@ def get_html(url):
     return r
 
 
-def parser(url):
+def parser(url=URL):
     page = 1
     while True:
         html = get_html(f'{url}page-{page}')
