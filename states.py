@@ -29,20 +29,19 @@ def main_menu_state(message, user, is_entry=False):
     else:
         if message.text == DICTIONARY['ru']['my_events_btn']:
             bot.send_message(message.chat.id, "Тут будут ивенты, на которые ты подпишешься")
-            return True, 'main_menu_state'
+            return False, 'main_menu_state'
         elif message.text == DICTIONARY['ru']['settings_btn']:
             return True, 'settings_menu_state'
         elif message.text == DICTIONARY['ru']['get_events_btn']:
             # send message with list of events
             events = get_events_from_db_for_user(user)
-            events_message = format_events_as_message(events)
-            # TODO: add inline keyboard so users could subscribe to the specific event
             events_ids = [obj.id for obj in events]
+            events_message = format_events_as_message(events)
             bot.send_message(
                 message.chat.id, text=events_message, parse_mode='Markdown',
                 reply_markup=events_inline_keyboard(events_ids, user)
             )
-            return True, 'main_menu_state'
+            return False, 'main_menu_state'
         else:
             bot.send_message(message.chat.id, DICTIONARY['ru']['no_button'])
 

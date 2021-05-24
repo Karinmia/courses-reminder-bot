@@ -45,23 +45,19 @@ def categories_inline_keyboard(categories=CATEGORIES, user=None, language='ru'):
     return keyboard
 
 
-def events_inline_keyboard(events=[], user=None, language='ru'):
+def events_inline_keyboard(events_ids=[], user=None, language='ru'):
     keyboard = InlineKeyboardMarkup(row_width=5)
 
-    # split events list into smaller lists (with lenght = 5)
-    chunks = [events[x:x + 5] for x in range(0, len(events), 5)]
+    user_events_ids = [obj.event_id for obj in user.events.all()]
 
-    user_events_ids = [obj.id for obj in user.events.all()]
+    buttons = []
+    for i, event_id in enumerate(events_ids):  # event_id is event's primary key (id)
+        if event_id in user_events_ids:
+            buttons.append(InlineKeyboardButton(f"{i+1} ✅ ", callback_data=f"sub_{event_id}"))
+        else:
+            buttons.append(InlineKeyboardButton(i+1, callback_data=f"sub_{event_id}"))
 
-    for chunk in chunks:
-        buttons = []
-        for i, event_id in enumerate(chunk):  # event_id is event's primary key (id)
-            if event_id in user_events_ids:
-                buttons.append(InlineKeyboardButton(f"{i+1} ✅ ", callback_data=f"sub_{event_id}"))
-            else:
-                buttons.append(InlineKeyboardButton(i+1, callback_data=f"sub_{event_id}"))
-
-        keyboard.add(*buttons)
+    keyboard.add(*buttons)
 
     return keyboard
 

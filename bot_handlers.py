@@ -5,6 +5,7 @@ from database import session
 from keyboards import *
 from models import User, UserSubscription, Event, UserEvent
 from state_handler import get_state_and_process
+from utils import get_events_from_db_for_user
 
 logger = logging.getLogger(__name__)
 
@@ -68,22 +69,29 @@ def callback_inline(call):
     elif call.data.startswith('sub_'):
         event_id = call.data.replace("sub_", "")
         # create UserEvent object and send message
-        try:
+        sub_event = session.query(UserEvent).filter_by(event_id=event_id, user_id=user.id).first()
+        if not sub_event:
             sub_event = UserEvent(event_id=event_id, user_id=user.id)
             session.add(sub_event)
             session.commit()
-        except Exception as e:
-            logger.error(e)
-            bot.send_message(
-                call.message.chat.id,
-                text="Вы уже подписались на это событие"
-            )
-        else:
-            logger.debug(f'user {user.username} subscribed to event {event_id}')
             bot.send_message(
                 call.message.chat.id,
                 text="Вы успешно подписались на событие! Мы напомним о нем за день до начала."
             )
+            logger.debug(f'user {user.username} subscribed to event {event_id}')
+        else:
+            bot.send_message(
+                call.message.chat.id,
+                text="Вы уже подписались на это событие"
+            )
+        events = get_events_from_db_for_user(user)
+        all_events_ids = [obj.id for obj in events]
+        bot.edit_message_reply_markup(
+            call.message.chat.id,
+            call.message.message_id,
+            call.message.message_id,
+            reply_markup=events_inline_keyboard(all_events_ids, user)
+        )
     elif call.data.startswith('category_'):
         sub_name = call.data.replace("category_", "")
         subscription = session.query(UserSubscription).filter_by(name=sub_name, user_id=user.id).first()
