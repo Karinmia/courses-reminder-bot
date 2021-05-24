@@ -63,8 +63,14 @@ def callback_inline(call):
         get_state_and_process(call.message, user, True)
 
     if call.data == "save_categories":
-        user.state = 'set_city_state'
-        session.commit()
+        if user.state != 'settings_menu_state':
+            user.state = 'set_city_state'
+            session.commit()
+
+        bot.send_message(
+            call.message.chat.id,
+            DICTIONARY[user.language]['saved_settings_msg']
+        )
         get_state_and_process(call.message, user, True)
 
     elif call.data.startswith('sub_'):

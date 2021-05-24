@@ -101,8 +101,12 @@ def settings_menu_state(message, user, is_entry=False):
     else:
         user_lang = user.language
         if message.text == DICTIONARY[user_lang]['settings_categories_btn']:
-            bot.send_message(message.chat.id, "В разработке...")
-            return True, 'settings_menu_state'
+            bot.send_message(
+                message.chat.id,
+                DICTIONARY[user.language]['set_categories_msg'],
+                reply_markup=categories_inline_keyboard(user=user, language=user.language)
+            )
+            return False, 'settings_menu_state'
         elif message.text == DICTIONARY[user_lang]['settings_city_btn']:
             return True, 'change_city_state'
         elif message.text == DICTIONARY[user_lang]['back_btn']:
