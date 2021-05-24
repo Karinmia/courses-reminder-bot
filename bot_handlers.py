@@ -66,6 +66,7 @@ def callback_inline(call):
         user.state = 'set_city_state'
         session.commit()
         get_state_and_process(call.message, user, True)
+
     elif call.data.startswith('sub_'):
         event_id = call.data.replace("sub_", "")
         # create UserEvent object and send message
@@ -92,6 +93,7 @@ def callback_inline(call):
             call.message.message_id,
             reply_markup=events_inline_keyboard(all_events_ids, user)
         )
+
     elif call.data.startswith('category_'):
         sub_name = call.data.replace("category_", "")
         subscription = session.query(UserSubscription).filter_by(name=sub_name, user_id=user.id).first()
