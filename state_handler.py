@@ -4,6 +4,7 @@ from states import *
 
 
 states = {
+    'set_language_state': set_language_state,
     'login_state': login_state,
     'main_menu_state': main_menu_state,
     'set_city_state': set_city_state,

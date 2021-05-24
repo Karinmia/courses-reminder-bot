@@ -22,7 +22,7 @@ def send_welcome(message):
                 username=message.from_user.username,
                 first_name=message.from_user.first_name,
                 last_name=message.from_user.last_name,
-                state='login_state'
+                state='set_language_state'
             )
             session.add(user)
             session.commit()
@@ -77,13 +77,13 @@ def callback_inline(call):
             session.commit()
             bot.send_message(
                 call.message.chat.id,
-                text="Вы успешно подписались на событие! Мы напомним о нем за день до начала."
+                DICTIONARY[user.language]['subscribe_success_msg']
             )
             logger.debug(f'user {user.username} subscribed to event {event_id}')
         else:
             bot.send_message(
                 call.message.chat.id,
-                text="Вы уже подписались на это событие"
+                DICTIONARY[user.language]['already_subscribed_msg']
             )
         events = get_events_from_db_for_user(user)
         all_events_ids = [obj.id for obj in events]

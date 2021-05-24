@@ -4,6 +4,15 @@ from enums import CATEGORIES
 from languages import DICTIONARY
 
 
+def get_languages_keyboard():
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(
+        DICTIONARY['ua_lang_btn'],
+        DICTIONARY['ru_lang_btn']
+    )
+    return keyboard
+
+
 def get_main_menu_keyboard(language='ru'):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(DICTIONARY[language]['get_events_btn'])
