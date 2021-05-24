@@ -36,7 +36,7 @@ def login_state(message, user, is_entry=False):
         bot.send_message(
             message.chat.id,
             DICTIONARY[user.language]['welcome_msg'].format(user.first_name),
-            reply_markup=categories_inline_keyboard(user=user)
+            reply_markup=categories_inline_keyboard(user=user, language=user.language)
         )
     else:
         return True, 'main_menu_state'
@@ -65,7 +65,7 @@ def main_menu_state(message, user, is_entry=False):
             events_message = format_events_as_message(events)
             bot.send_message(
                 message.chat.id, text=events_message, parse_mode='Markdown',
-                reply_markup=events_inline_keyboard(events_ids, user)
+                reply_markup=events_inline_keyboard(events_ids, user, language=user.language)
             )
             return False, 'main_menu_state'
         else:
