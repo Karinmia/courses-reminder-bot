@@ -1,3 +1,12 @@
+import enum
+
+
+class Languages(enum.Enum):
+    ru = 1
+    ua = 2
+    en = 3
+
+
 CATEGORIES = [
     '.NET',
     # 'Agile',

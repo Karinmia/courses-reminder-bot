@@ -18,7 +18,7 @@ def login_state(message, user, is_entry=False):
         )
     else:
         return True, 'main_menu_state'
-    return False, ''
+    return False, 'main_menu_state'
 
 
 def main_menu_state(message, user, is_entry=False):

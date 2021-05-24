@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Text, Integer, DateTime, ForeignKey
+from sqlalchemy import Column, String, Text, Integer, DateTime, ForeignKey, Enum
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref
@@ -17,6 +17,7 @@ class User(Base):
     last_name = Column('last_name', Text)
     username = Column('username', Text, nullable=False)
     city = Column(String(100))
+    language = Column(String(5))
     state = Column('state', Text, nullable=False)
     created_at = Column('created_on', DateTime, default=datetime.now)
     last_updated = Column('last_updated', DateTime, default=datetime.now, onupdate=datetime.now)
