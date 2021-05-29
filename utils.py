@@ -1,3 +1,6 @@
+from datetime import datetime
+from logging import Logger
+
 from database import session
 from models import User, UserSubscription, Event, UserEvent
 
@@ -38,3 +41,21 @@ def format_events_as_message(events):
         message += f"\n_{event.description}_\n[Подробнее..]({event.url})\n\n"
 
     return message
+
+
+def log_time(logger: Logger, msg):
+    def log(func):
+        def wrapped(*args, **kwargs):
+            logger.info(f'start {msg}')
+            t1 = datetime.now()
+            result = None
+            try:
+                result = func(*args, **kwargs)
+            except Exception as e:
+                # capture_exception(e)
+                logger.error(e, exc_info=True)
+            t = datetime.now() - t1
+            logger.info(f'{msg} took {t.seconds}s, {t.microseconds / 1000}ms')
+            return result
+        return wrapped
+    return log

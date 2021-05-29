@@ -23,6 +23,12 @@ DICTIONARY = {
         'enter_city_msg': "Введи название города:",
         'saved_city_msg': "Город успешно обновлен",
 
+        'admin_menu_btn': 'Меню админа',
+        'admin_menu_msg': 'Очистить бд - удалить из базы данных все неактуальные события',
+        'clear_events_btn': 'Очистить бд',
+        'clear_events_success_msg': '{0} событий удалено из базы данных',
+
+        'no_events_msg': 'Вы еще не подписались на событие',
         'saved_settings_msg': "Настройки сохранены",
         'done_btn': "Готово",
         'skip_btn': 'Пропустить',
@@ -54,6 +60,12 @@ DICTIONARY = {
         'saved_city_msg': "Місто оновлено",
         'subscribe_success_msg': 'Ви успішно підписалися на подію! Ми нагадаємо про неї за день до початку.',
         'already_subscribed_msg': 'Ви вже підписані на цю подію. Ми нагадаємо про неї за день до початку.',
+
+        'admin_menu_btn': 'Меню адміна',
+        'clear_events_btn': 'Очистити бд',
+        'clear_events_success_msg': '{0} подій видалено з бази даних',
+
+        'no_events_msg': 'Ви ще не підписані на жодну подію',
 
         'saved_settings_msg': "Налаштування оновлено",
         'done_btn': "Готово",

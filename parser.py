@@ -1,14 +1,14 @@
 from bs4 import BeautifulSoup
+import logging
 import requests
+
 from sqlalchemy.dialects.postgresql import insert
-# from lxml.html import fromstring as lxml_fromstring
-# from lxml.html.clean import Cleaner
 
 from models import User, UserSubscription, Event
 from database import session
-# from bot_object import bot
+from utils import log_time
 
-# cleaner = Cleaner(style=True)
+logger = logging.getLogger(__name__)
 
 URL = 'https://dou.ua/calendar/'
 HEADERS = {
@@ -81,15 +81,29 @@ def parse_events(html):
     session.commit()
 
 
-parser(URL)
-
-
-def delete_event():
-    events = session.query(Event).all()
-    for event in events:
+@log_time(logger, 'clearing events table')
+def delete_events():
+    """
+    Clear database from canceled events that no longer exist on the site
+    :return: number of deleted events
+    """
+    i = 0
+    events_to_delete = []
+    for event in session.query(Event).all():
         html = get_html(URL + str(event.id_site))
         if html.status_code == 404:
-            print(f'delete event: {event.id_site}')
-            session.delete(event)
+            # session.delete(event)
+            events_to_delete.append(event.id_site)
+            i += 1
 
-# delete_event()
+    session.query(Event).filter(
+        Event.id_site.in_(events_to_delete)
+    ).delete(synchronize_session=False)
+
+    logger.debug(f'{event.id_site} event was deleted from db')
+
+    session.commit()
+    return i
+
+
+# parser(URL)

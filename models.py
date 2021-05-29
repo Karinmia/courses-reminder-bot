@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref
 
+from enums import Languages, Roles
 from database import Base, engine
 
 
@@ -18,18 +19,20 @@ class User(Base):
     username = Column('username', Text, nullable=False)
     city = Column(String(100))
     language = Column(String(5), default='ua')
+    role = Column(Enum(Roles), default=Roles.user.value)
     state = Column('state', Text, nullable=False)
     created_at = Column('created_on', DateTime, default=datetime.now)
     last_updated = Column('last_updated', DateTime, default=datetime.now, onupdate=datetime.now)
     subscriptions = relationship("UserSubscription", cascade="all,delete", backref="user", lazy='dynamic')
     events = relationship("UserEvent", cascade="all,delete", lazy='dynamic')
 
-    def __init__(self, user_id, username, first_name, last_name, state):
+    def __init__(self, user_id, username, first_name, last_name, state, role):
         self.user_id = user_id
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
         self.state = state
+        self.role = role
 
     def __repr__(self):
         return f"<User(username='{self.username}')>"

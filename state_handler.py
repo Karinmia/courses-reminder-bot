@@ -10,6 +10,7 @@ states = {
     'set_city_state': set_city_state,
     'settings_menu_state': settings_menu_state,
     'change_city_state': change_city_state,
+    'admin_menu_state': admin_menu_state,
 }
 
 

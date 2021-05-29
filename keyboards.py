@@ -1,6 +1,6 @@
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
-from enums import CATEGORIES
+from enums import CATEGORIES, Roles
 from languages import DICTIONARY
 
 
@@ -13,11 +13,16 @@ def get_languages_keyboard():
     return keyboard
 
 
-def get_main_menu_keyboard(language='ua'):
+def get_main_menu_keyboard(role=Roles.user, language='ua'):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(DICTIONARY[language]['get_events_btn'])
-    keyboard.add(DICTIONARY[language]['my_events_btn'])
+
+    keyboard.add(
+        DICTIONARY[language]['get_events_btn'],
+        DICTIONARY[language]['my_events_btn']
+    )
     keyboard.add(DICTIONARY[language]['settings_btn'])
+    if role == Roles.admin:
+        keyboard.add(DICTIONARY[language]['admin_menu_btn'])
     return keyboard
 
 
@@ -68,6 +73,13 @@ def events_inline_keyboard(events_ids=[], user=None, language='ua'):
 
     keyboard.add(*buttons)
 
+    return keyboard
+
+
+def get_admin_menu_keyboard(language='ua'):
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(DICTIONARY[language]['clear_events_btn'])
+    keyboard.add(DICTIONARY[language]['mainmenu_msg'])
     return keyboard
 
 

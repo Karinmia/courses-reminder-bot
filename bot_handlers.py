@@ -1,7 +1,9 @@
 import logging
 
 from bot_object import bot
+from config import ADMINS
 from database import session
+from enums import Roles
 from keyboards import *
 from models import User, UserSubscription, Event, UserEvent
 from state_handler import get_state_and_process
@@ -16,13 +18,19 @@ def send_welcome(message):
         logger.debug(f"/start | user_id: {message.from_user.id}")
         user = session.query(User).filter_by(user_id=message.from_user.id).first()
 
+        role = Roles.user.value  # common user
+        if str(message.from_user.id) in ADMINS:
+            logger.info("ADMIN is here")
+            role = Roles.user.admin
+
         if user is None:
             user = User(
                 user_id=message.from_user.id,
                 username=message.from_user.username,
                 first_name=message.from_user.first_name,
                 last_name=message.from_user.last_name,
-                state='set_language_state'
+                state='set_language_state',
+                role=role
             )
             session.add(user)
             session.commit()

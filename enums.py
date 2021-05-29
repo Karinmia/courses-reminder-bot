@@ -2,9 +2,14 @@ import enum
 
 
 class Languages(enum.Enum):
+    ua = 0
     ru = 1
-    ua = 2
-    en = 3
+    en = 2
+
+
+class Roles(enum.Enum):
+    user = 0
+    admin = 1
 
 
 CATEGORIES = [

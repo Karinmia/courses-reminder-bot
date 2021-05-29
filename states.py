@@ -6,6 +6,7 @@ from database import session
 from models import User
 from keyboards import *
 from languages import DICTIONARY
+from parser import delete_events
 from utils import get_events_from_db_for_user, get_events_for_user, format_events_as_message
 
 
@@ -47,17 +48,18 @@ def main_menu_state(message, user, is_entry=False):
     if is_entry:
         bot.send_message(
             message.chat.id, DICTIONARY[user.language]['mainmenu_msg'],
-            reply_markup=get_main_menu_keyboard(language=user.language))
+            reply_markup=get_main_menu_keyboard(role=user.role, language=user.language))
     else:
         if message.text == DICTIONARY[user.language]['my_events_btn']:
             user_events = get_events_for_user(user)
-            events_message = format_events_as_message(user_events)
+            if user_events:
+                events_msg = format_events_as_message(user_events)
+            else:
+                events_msg = DICTIONARY[user.language]['no_events_msg']
             bot.send_message(
-                message.chat.id, text=events_message, parse_mode='Markdown'
+                message.chat.id, text=events_msg, parse_mode='Markdown'
             )
             return False, 'main_menu_state'
-        elif message.text == DICTIONARY[user.language]['settings_btn']:
-            return True, 'settings_menu_state'
         elif message.text == DICTIONARY[user.language]['get_events_btn']:
             # send message with list of events
             events = get_events_from_db_for_user(user)
@@ -68,6 +70,10 @@ def main_menu_state(message, user, is_entry=False):
                 reply_markup=events_inline_keyboard(events_ids, user, language=user.language)
             )
             return False, 'main_menu_state'
+        elif message.text == DICTIONARY[user.language]['settings_btn']:
+            return True, 'settings_menu_state'
+        elif message.text == DICTIONARY[user.language]['admin_menu_btn']:
+            return True, 'admin_menu_state'
         else:
             bot.send_message(message.chat.id, DICTIONARY[user.language]['no_button'])
 
@@ -132,5 +138,26 @@ def change_city_state(message, user, is_entry=False):
             session.commit()
             bot.send_message(message.chat.id, DICTIONARY[user.language]['saved_city_msg'])
             return True, 'main_menu_state'
+
+    return False, ''
+
+
+def admin_menu_state(message, user, is_entry=False):
+    if is_entry:
+        bot.send_message(
+            message.chat.id, DICTIONARY[user.language]['admin_menu_msg'],
+            reply_markup=get_admin_menu_keyboard(language=user.language))
+    else:
+        if message.text == DICTIONARY[user.language]['clear_events_btn']:
+            deleted_events = delete_events()
+            bot.send_message(
+                message.chat.id,
+                DICTIONARY[user.language]['clear_events_success_msg'].format(deleted_events)
+            )
+            return False, 'admin_menu_state'
+        if message.text == DICTIONARY[user.language]['mainmenu_msg']:
+            return True, 'main_menu_state'
+        else:
+            bot.send_message(message.chat.id, DICTIONARY[user.language]['no_button'])
 
     return False, ''
