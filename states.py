@@ -3,7 +3,7 @@ from time import sleep
 
 from bot_object import bot
 from database import session
-from models import User
+from models import User, SupportRequest
 from keyboards import *
 from languages import DICTIONARY
 from parser import delete_events
@@ -72,6 +72,8 @@ def main_menu_state(message, user, is_entry=False):
             return False, 'main_menu_state'
         elif message.text == DICTIONARY[user.language]['settings_btn']:
             return True, 'settings_menu_state'
+        elif message.text == DICTIONARY[user.language]['support_btn']:
+            return True, 'support_menu_state'
         elif message.text == DICTIONARY[user.language]['admin_menu_btn']:
             return True, 'admin_menu_state'
         else:
@@ -137,6 +139,24 @@ def change_city_state(message, user, is_entry=False):
             user.city = message.text
             session.commit()
             bot.send_message(message.chat.id, DICTIONARY[user.language]['saved_city_msg'])
+            return True, 'main_menu_state'
+
+    return False, ''
+
+
+def support_menu_state(message, user, is_entry=False):
+    if is_entry:
+        bot.send_message(
+            message.chat.id, DICTIONARY[user.language]['support_menu_msg'],
+            reply_markup=get_back_keyboard(language=user.language))
+    else:
+        if message.text == DICTIONARY[user.language]['back_btn']:
+            return True, 'main_menu_state'
+        else:
+            support_request = SupportRequest(user_id=user.id, message=message.text[:300])
+            session.add(support_request)
+            session.commit()
+            bot.send_message(message.chat.id, DICTIONARY[user.language]['sent_support_request_msg'])
             return True, 'main_menu_state'
 
     return False, ''

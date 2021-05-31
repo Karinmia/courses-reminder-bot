@@ -9,8 +9,9 @@ def get_events_from_db_for_user(user):
     """Return events from db filtered by user settings"""
     user_event_types = ['Online', user.city] if user.city else ['Online']
 
-    user_subscriptions = session.query(UserSubscription.name).filter_by(user_id=user.id).all()
-    user_subscriptions = [i for sub in user_subscriptions for i in sub]
+    # user_subscriptions = session.query(UserSubscription.name).filter_by(user_id=user.id).all()
+    # user_subscriptions = [i for sub in user_subscriptions for i in sub]
+    user_subscriptions = [s.name for s in user.subscriptions.all()]
 
     # TODO: return all events so we can make pagination (now we limit events to 5 objects)
     events = session.query(Event).filter(
@@ -28,6 +29,7 @@ def get_events_for_user(user):
     events = session.query(Event).filter(
         Event.id.in_(user_events_id)
     ).all()
+    # [event for event in user.events.all()]
     return events
 
 

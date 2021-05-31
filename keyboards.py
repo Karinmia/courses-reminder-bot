@@ -15,14 +15,17 @@ def get_languages_keyboard():
 
 def get_main_menu_keyboard(role=Roles.user, language='ua'):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-
     keyboard.add(
         DICTIONARY[language]['get_events_btn'],
         DICTIONARY[language]['my_events_btn']
     )
     keyboard.add(DICTIONARY[language]['settings_btn'])
+
     if role == Roles.admin:
         keyboard.add(DICTIONARY[language]['admin_menu_btn'])
+    else:
+        keyboard.add(DICTIONARY[language]['support_btn'])
+
     return keyboard
 
 
