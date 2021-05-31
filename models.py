@@ -100,5 +100,23 @@ class UserEvent(Base):
         return self.id
 
 
+class SupportRequest(Base):
+    __tablename__ = 'support_requests'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey(Event.id))
+    message = Column(Text)
+
+    def __init__(self, user_id, message):
+        self.user_id = user_id
+        self.message = message
+
+    def __repr__(self):
+        return f"<SupportRequest(id='{self.id}')>"
+
+    def __str__(self):
+        return self.id
+
+
 # Base.metadata.drop_all(engine)
 # Base.metadata.create_all(engine)
