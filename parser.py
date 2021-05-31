@@ -93,14 +93,14 @@ def delete_events():
         html = get_html(URL + str(event.id_site))
         if html.status_code == 404:
             # session.delete(event)
-            events_to_delete.append(event.id_site)
+            events_to_delete.append(event.id)
             i += 1
 
     session.query(Event).filter(
-        Event.id_site.in_(events_to_delete)
+        Event.id.in_(events_to_delete)
     ).delete(synchronize_session=False)
 
-    logger.debug(f'{event.id_site} event was deleted from db')
+    logger.debug(f'{i} events was deleted from db')
 
     session.commit()
     return i
