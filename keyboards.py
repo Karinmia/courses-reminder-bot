@@ -21,8 +21,6 @@ def get_main_menu_keyboard(role=Roles.user, language='ua'):
     )
     keyboard.add(DICTIONARY[language]['settings_btn'], DICTIONARY[language]['support_btn'])
 
-    # keyboard.add()
-
     if role == Roles.admin:
         keyboard.add(DICTIONARY[language]['admin_menu_btn'])
 
@@ -91,8 +89,8 @@ def get_unsubscribe_keyboard(obj_id, language='ua'):
 
 def get_admin_menu_keyboard(language='ua'):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(DICTIONARY[language]['support_btn'])
-    keyboard.add(DICTIONARY[language]['clear_events_btn'])
+    keyboard.add(DICTIONARY[language]['support_btn'], DICTIONARY[language]['clear_events_btn'])
+    keyboard.add(DICTIONARY[language]['add_admin_btn'], DICTIONARY[language]['settings_btn'])
     keyboard.add(DICTIONARY[language]['mainmenu_msg'])
     return keyboard
 
