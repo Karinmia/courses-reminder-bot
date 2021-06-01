@@ -5,7 +5,7 @@ from config import ADMINS
 from database import session
 from enums import Roles
 from keyboards import *
-from models import User, UserSubscription, Event, UserEvent
+from models import User, UserSubscription, Event, UserEvent, SupportRequest
 from state_handler import get_state_and_process
 from utils import get_events_from_db_for_user
 
@@ -123,7 +123,22 @@ def callback_inline(call):
             call.message.message_id,
             reply_markup=categories_inline_keyboard(user=user)
         )
-        # get_state_and_process(call.message, user, True)
+    elif call.data.startswith('respond_'):
+        sup_request_id = call.data.replace("respond_", "")
+        sup_request = session.query(SupportRequest).filter_by(
+            id=sup_request_id, is_resolved=False
+        ).first()
+        if not sup_request:
+            logger.error(f"Can't find a support request with id {sup_request_id}")
+            bot.send_message(
+                call.message.chat.id,
+                DICTIONARY[user.language]['already_subscribed_msg']
+            )
+        else:
+            # create SupportResponse object
+            user.state = 'set_city_state'
+            session.commit()
+
     else:
         logger.warning(f"Invalid call.data: {call.data}\nUser: id={user.id} username={user.username}")
 

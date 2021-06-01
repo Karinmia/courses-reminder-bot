@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Text, Integer, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, String, Text, Integer, DateTime, ForeignKey, Enum, Boolean
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref
@@ -21,10 +21,11 @@ class User(Base):
     language = Column(String(5), default='ua')
     role = Column(Enum(Roles), default=Roles.user.value)
     state = Column('state', Text, nullable=False)
-    created_at = Column('created_on', DateTime, default=datetime.now)
+    created_at = Column('created_at', DateTime, default=datetime.now)
     last_updated = Column('last_updated', DateTime, default=datetime.now, onupdate=datetime.now)
     subscriptions = relationship("UserSubscription", cascade="all,delete", backref="user", lazy='dynamic')
     events = relationship("UserEvent", cascade="all,delete", lazy='dynamic')
+    support_requests = relationship("SupportRequest", cascade="all,delete", lazy='dynamic')
 
     def __init__(self, user_id, username, first_name, last_name, state, role):
         self.user_id = user_id
@@ -104,11 +105,31 @@ class SupportRequest(Base):
     __tablename__ = 'support_requests'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey(Event.id))
-    message = Column(Text)
+    user_id = Column(Integer, ForeignKey(User.id))
+    message = Column(Text, nullable=False)
+    is_resolved = Column(Boolean, default=False)
+    created_at = Column('created_at', DateTime, default=datetime.now)
 
     def __init__(self, user_id, message):
         self.user_id = user_id
+        self.message = message
+
+    def __repr__(self):
+        return f"<SupportRequest(id='{self.id}')>"
+
+    def __str__(self):
+        return self.id
+
+
+class SupportResponse(Base):
+    __tablename__ = 'support_response'
+
+    id = Column(Integer, primary_key=True)
+    support_request_id = Column(Integer, ForeignKey(SupportRequest.id))
+    message = Column(Text, nullable=False)
+
+    def __init__(self, support_request_id, message):
+        self.support_request_id = support_request_id
         self.message = message
 
     def __repr__(self):

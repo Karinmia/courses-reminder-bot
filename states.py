@@ -3,11 +3,13 @@ from time import sleep
 
 from bot_object import bot
 from database import session
-from models import User, SupportRequest
+from models import User, SupportRequest, SupportResponse
 from keyboards import *
 from languages import DICTIONARY
 from parser import delete_events
-from utils import get_events_from_db_for_user, get_events_for_user, format_events_as_message
+from utils import (
+    get_events_from_db_for_user, get_events_for_user, format_events_as_message, get_support_requests
+)
 
 
 def set_language_state(message, user, is_entry=False):
@@ -51,25 +53,32 @@ def main_menu_state(message, user, is_entry=False):
             reply_markup=get_main_menu_keyboard(role=user.role, language=user.language))
     else:
         if message.text == DICTIONARY[user.language]['my_events_btn']:
-            user_events = get_events_for_user(user)
-            if user_events:
-                events_msg = format_events_as_message(user_events)
+            if user_events := get_events_for_user(user):
+                for event in user_events:
+                    events_msg = format_events_as_message(event)
+                    bot.send_message(
+                        message.chat.id, text=events_msg, parse_mode='Markdown',
+                        reply_markup=get_unsubscribe_keyboard(obj_id=event.id, language=user.language)
+                    )
             else:
                 events_msg = DICTIONARY[user.language]['no_events_msg']
-            bot.send_message(
-                message.chat.id, text=events_msg, parse_mode='Markdown'
-            )
+                bot.send_message(message.chat.id, text=events_msg)
             return False, 'main_menu_state'
+
         elif message.text == DICTIONARY[user.language]['get_events_btn']:
             # send message with list of events
-            events = get_events_from_db_for_user(user)
-            events_ids = [obj.id for obj in events]
-            events_message = format_events_as_message(events)
-            bot.send_message(
-                message.chat.id, text=events_message, parse_mode='Markdown',
-                reply_markup=events_inline_keyboard(events_ids, user, language=user.language)
-            )
+            if events := get_events_from_db_for_user(user):
+                events_ids = [obj.id for obj in events]
+                events_msg = format_events_as_message(events)
+                bot.send_message(
+                    message.chat.id, text=events_msg, parse_mode='Markdown',
+                    reply_markup=events_inline_keyboard(events_ids, user, language=user.language)
+                )
+            else:
+                events_msg = DICTIONARY[user.language]['no_events_msg']
+                bot.send_message(message.chat.id, text=events_msg)
             return False, 'main_menu_state'
+
         elif message.text == DICTIONARY[user.language]['settings_btn']:
             return True, 'settings_menu_state'
         elif message.text == DICTIONARY[user.language]['support_btn']:
@@ -168,7 +177,16 @@ def admin_menu_state(message, user, is_entry=False):
             message.chat.id, DICTIONARY[user.language]['admin_menu_msg'],
             reply_markup=get_admin_menu_keyboard(language=user.language))
     else:
-        if message.text == DICTIONARY[user.language]['clear_events_btn']:
+        if message.text == DICTIONARY[user.language]['support_btn']:
+            bot.send_message(message.chat.id, DICTIONARY[user.language]['admin_support_menu_msg'])
+            # send list of support requests with inline button "Respond" per each
+            s_requests = get_support_requests()
+            for obj in s_requests:
+                bot.send_message(
+                    message.chat.id, text=obj.message,
+                    reply_markup=get_admin_support_request_keyboard(obj_id=obj.id, language=user.language))
+            return False, 'admin_menu_state'
+        elif message.text == DICTIONARY[user.language]['clear_events_btn']:
             deleted_events = delete_events()
             bot.send_message(
                 message.chat.id,
@@ -179,5 +197,20 @@ def admin_menu_state(message, user, is_entry=False):
             return True, 'main_menu_state'
         else:
             bot.send_message(message.chat.id, DICTIONARY[user.language]['no_button'])
+
+    return False, ''
+
+
+def admin_support_respond_state(message, user, is_entry=False):
+    if is_entry:
+        bot.send_message(
+            message.chat.id, DICTIONARY[user.language]['admin_respond_msg'],
+            reply_markup=get_back_keyboard(language=user.language))
+    else:
+        if message.text == DICTIONARY[user.language]['back_btn']:
+            return True, 'admin_menu_state'
+        else:
+            # create SupportRespond
+            pass
 
     return False, ''

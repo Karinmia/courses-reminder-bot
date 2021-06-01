@@ -2,7 +2,7 @@ from datetime import datetime
 from logging import Logger
 
 from database import session
-from models import User, UserSubscription, Event, UserEvent
+from models import User, UserSubscription, Event, UserEvent, SupportRequest
 
 
 def get_events_from_db_for_user(user):
@@ -23,7 +23,7 @@ def get_events_from_db_for_user(user):
 
 
 def get_events_for_user(user):
-    """Return events from db on which user subscribed"""
+    """Return events from db on which user is subscribed"""
     user_events_id = session.query(UserEvent.event_id).filter_by(user_id=user.id).all()
     user_events_id = [i for obj in user_events_id for i in obj]
     events = session.query(Event).filter(
@@ -33,14 +33,20 @@ def get_events_for_user(user):
     return events
 
 
-def format_events_as_message(events):
-    message = ""
+def get_support_requests():
+    """Return first five unresolved support request from db"""
+    return session.query(SupportRequest).filter_by(is_resolved=False).limit(5).all()
 
-    for i, event in enumerate(events):
-        message += f"*{i+1}. {event.name}*\n{event.date}"
-        if event.price:
-            message += f", {event.price}\n"
-        message += f"\n_{event.description}_\n[Подробнее..]({event.url})\n\n"
+
+# def format_support_request_as_msg(obj):
+#     message = f""
+
+
+def format_events_as_message(event):
+    message = f"*{event.name}*\n{event.date}"
+    if event.price:
+        message += f", {event.price}\n"
+    message += f"\n_{event.description}_\n[Подробнее..]({event.url})\n\n"
 
     return message
 
