@@ -12,6 +12,7 @@ states = {
     'change_city_state': change_city_state,
     'support_menu_state': support_menu_state,
     'admin_menu_state': admin_menu_state,
+    'add_admin_state': add_admin_state,
 }
 
 

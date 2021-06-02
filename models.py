@@ -13,27 +13,22 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(Integer)
     first_name = Column('first_name', Text)
     last_name = Column('last_name', Text)
-    username = Column('username', Text, nullable=False)
+    username = Column('username', Text)
     city = Column(String(100))
     language = Column(String(5), default='ua')
     role = Column(Enum(Roles), default=Roles.user.value)
-    state = Column('state', Text, nullable=False)
+    state = Column('state', Text)
     created_at = Column('created_at', DateTime, default=datetime.now)
     last_updated = Column('last_updated', DateTime, default=datetime.now, onupdate=datetime.now)
     subscriptions = relationship("UserSubscription", cascade="all,delete", backref="user", lazy='dynamic')
     events = relationship("UserEvent", cascade="all,delete", lazy='dynamic')
     support_requests = relationship("SupportRequest", cascade="all,delete", lazy='dynamic')
 
-    def __init__(self, user_id, username, first_name, last_name, state, role):
-        self.user_id = user_id
-        self.username = username
-        self.first_name = first_name
-        self.last_name = last_name
-        self.state = state
-        self.role = role
+    # def __init__(self, username):
+    #     self.username = username
 
     def __repr__(self):
         return f"<User(username='{self.username}')>"
@@ -67,13 +62,14 @@ class Event(Base):
     id = Column(Integer, primary_key=True)
     id_site = Column(Integer, unique=True)
     name = Column(Text)
-    # date = Column(DateTime, nullable=True)
     date = Column(Text, nullable=True)
     price = Column(Text, nullable=True)
     type = Column(ARRAY(String(64)), nullable=True)
     description = Column(Text, nullable=True)
     tags = Column(ARRAY(String(64)), nullable=True)
     subscribed_users = relationship("UserEvent", cascade="all,delete", lazy='dynamic')
+    city = Column(Integer, ForeignKey('cities.id'))
+    categories = relationship("EventCategory", cascade="all,delete", lazy='dynamic')
 
     @hybrid_property
     def url(self):
@@ -122,7 +118,7 @@ class SupportRequest(Base):
 
 
 class SupportResponse(Base):
-    __tablename__ = 'support_response'
+    __tablename__ = 'support_responses'
 
     id = Column(Integer, primary_key=True)
     support_request_id = Column(Integer, ForeignKey(SupportRequest.id))
@@ -137,6 +133,57 @@ class SupportResponse(Base):
 
     def __str__(self):
         return self.id
+
+
+class Category(Base):
+    __tablename__ = 'categories'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Text)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"<Category(id='{self.id}')>"
+
+    def __str__(self):
+        return self.name
+
+
+class City(Base):
+    __tablename__ = 'cities'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Text)
+    is_regional_center = Column(Boolean, default=False)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"<City(id='{self.id}')>"
+
+    def __str__(self):
+        return self.name
+
+
+class EventCategory(Base):
+    __tablename__ = 'event_categories'
+
+    id = Column(Integer, primary_key=True)
+    event_id = Column(Integer, ForeignKey(Event.id))
+    category_id = Column(Integer, ForeignKey(Category.id))
+
+    def __init__(self, event_id, category_id):
+        self.event_id = event_id
+        self.category_id = category_id
+
+    def __repr__(self):
+        return f"<Category(id='{self.id}')>"
+
+    def __str__(self):
+        return self.name
 
 
 # Base.metadata.drop_all(engine)

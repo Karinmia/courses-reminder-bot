@@ -75,7 +75,7 @@ def main_menu_state(message, user, is_entry=False):
                     reply_markup=events_inline_keyboard(events_ids, user, language=user.language)
                 )
             else:
-                events_msg = DICTIONARY[user.language]['no_events_msg']
+                events_msg = DICTIONARY[user.language]['empty_events_list_msg']
                 bot.send_message(message.chat.id, text=events_msg)
             return False, 'main_menu_state'
 
@@ -193,6 +193,8 @@ def admin_menu_state(message, user, is_entry=False):
                 DICTIONARY[user.language]['clear_events_success_msg'].format(deleted_events)
             )
             return False, 'admin_menu_state'
+        elif message.text == DICTIONARY[user.language]['add_admin_btn']:
+            return True, 'add_admin_state'
         if message.text == DICTIONARY[user.language]['mainmenu_msg']:
             return True, 'main_menu_state'
         else:
@@ -212,5 +214,51 @@ def admin_support_respond_state(message, user, is_entry=False):
         else:
             # create SupportRespond
             pass
+
+    return False, ''
+
+
+def add_admin_state(message, user, is_entry=False):
+    if is_entry:
+        bot.send_message(
+            message.chat.id, DICTIONARY[user.language]['add_admin_msg'],
+            reply_markup=get_back_keyboard(language=user.language)
+        )
+    else:
+        if message.text == DICTIONARY[user.language]['back_btn']:
+            return True, 'admin_menu_state'
+        else:
+            # get admin username
+            admin_username = message.text
+            admin_username = admin_username.replace('@', '')
+            print(f'{admin_username=}')
+
+            # check if user with such username exists in db
+            obj = session.query(User).filter_by(username=admin_username).first()
+            if obj:
+                print('user already exists')
+                if obj.role == Roles.admin:
+                    print('admin already exists')
+                    bot.send_message(message.chat.id, DICTIONARY[user.language]['admin_exists_msg'])
+                else:
+                    print('set admin role to user')
+                    # set role to admin
+                    obj.role = Roles.admin
+                    obj.save()
+                    session.commit()
+                    bot.send_message(message.chat.id, DICTIONARY[user.language]['admin_exists_msg'])
+            else:
+                print('create new admin user')
+                # create new user with admin role
+                admin = User(
+                    username=admin_username,
+                    role=Roles.admin,
+                    state='set_language_state'
+                )
+                session.add(admin)
+                session.commit()
+                bot.send_message(message.chat.id, DICTIONARY[user.language]['admin_created_msg'])
+
+            return True, 'admin_menu_state'
 
     return False, ''

@@ -35,7 +35,12 @@ def send_welcome(message):
             session.add(user)
             session.commit()
         else:
-            user.state = 'main_menu_state'
+            if not user.user_id:
+                user.user_id = message.from_user.id
+                user.first_name = message.from_user.first_name
+                user.last_name = message.from_user.last_name
+            else:
+                user.state = 'main_menu_state'
             session.commit()
 
         get_state_and_process(message, user, True)

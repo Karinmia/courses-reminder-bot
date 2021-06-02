@@ -45,8 +45,6 @@ def parse_events(html):
         url = item.find('h2', class_='title')
         id_site = str(url.find('a').get('href')).split('/')[4]
         name = item.find('a').get_text().strip()
-        # cleaned_ = cleaner.clean_html(lxml_fromstring(name))
-        # name = cleaned_.text_content()
 
         date = item.find('span', class_='date').get_text()
         block = item.find('div', class_='when-and-where')
