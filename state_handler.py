@@ -13,6 +13,9 @@ states = {
     'support_menu_state': support_menu_state,
     'admin_menu_state': admin_menu_state,
     'add_admin_state': add_admin_state,
+    'send_support_respond_state': send_support_respond_state,
+    'admin_settings_state': admin_settings_state,
+    'admin_edit_cities_state': admin_edit_cities_state,
 }
 
 

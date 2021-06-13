@@ -94,6 +94,16 @@ def get_admin_menu_keyboard(language='ua'):
     return keyboard
 
 
+def get_admin_settings_keyboard(language='ua'):
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(
+        DICTIONARY[language]['settings_city_btn'],
+        DICTIONARY[language]['settings_categories_btn'],
+    )
+    keyboard.add(DICTIONARY[language]['back_btn'])
+    return keyboard
+
+
 def get_admin_support_request_keyboard(obj_id, language='ua'):
     keyboard = InlineKeyboardMarkup(row_width=3)
     keyboard.add(InlineKeyboardButton(

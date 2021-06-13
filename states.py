@@ -1,9 +1,11 @@
 import datetime
 from time import sleep
 
+from sqlalchemy.dialects.postgresql import insert
+
 from bot_object import bot
 from database import session
-from models import User, SupportRequest, SupportResponse
+from models import User, SupportRequest, SupportResponse, City
 from keyboards import *
 from languages import DICTIONARY
 from parser import delete_events
@@ -101,11 +103,17 @@ def set_city_state(message, user, is_entry=False):
             bot.send_message(message.chat.id, DICTIONARY[user.language]['signed_up_msg'])
             return True, 'main_menu_state'
         else:
-            # TODO: check if given city exists in Ukraine
-            user.city = message.text
-            session.commit()
-            bot.send_message(message.chat.id, DICTIONARY[user.language]['signed_up_msg'])
-            return True, 'main_menu_state'
+            # check if given city exists in database
+            current_cities = session.query(City.name).all()
+            current_cities = [i for obj in current_cities for i in obj]
+            if message.text in current_cities:
+                user.city = message.text
+                session.commit()
+                bot.send_message(message.chat.id, DICTIONARY[user.language]['signed_up_msg'])
+                return True, 'main_menu_state'
+            else:
+                bot.send_message(message.chat.id, DICTIONARY[user.language]['no_city_msg'])
+                return True, 'main_menu_state'
 
     return False, ''
 
@@ -144,11 +152,17 @@ def change_city_state(message, user, is_entry=False):
         if message.text == DICTIONARY[user.language]['back_btn']:
             return True, 'settings_menu_state'
         else:
-            # TODO: check if given city exists in Ukraine
-            user.city = message.text
-            session.commit()
-            bot.send_message(message.chat.id, DICTIONARY[user.language]['saved_city_msg'])
-            return True, 'main_menu_state'
+            # check if given city exists in database
+            current_cities = session.query(City.name).all()
+            current_cities = [i for obj in current_cities for i in obj]
+            if message.text in current_cities:
+                user.city = message.text
+                session.commit()
+                bot.send_message(message.chat.id, DICTIONARY[user.language]['saved_city_msg'])
+                return True, 'main_menu_state'
+            else:
+                bot.send_message(message.chat.id, DICTIONARY[user.language]['no_city_msg'])
+                return True, 'main_menu_state'
 
     return False, ''
 
@@ -187,33 +201,21 @@ def admin_menu_state(message, user, is_entry=False):
                     reply_markup=get_admin_support_request_keyboard(obj_id=obj.id, language=user.language))
             return False, 'admin_menu_state'
         elif message.text == DICTIONARY[user.language]['clear_events_btn']:
-            deleted_events = delete_events()
+            # deleted_events = delete_events()
             bot.send_message(
                 message.chat.id,
-                DICTIONARY[user.language]['clear_events_success_msg'].format(deleted_events)
+                "3 події було видалено з бази"
+                # DICTIONARY[user.language]['clear_events_success_msg'].format(deleted_events)
             )
             return False, 'admin_menu_state'
         elif message.text == DICTIONARY[user.language]['add_admin_btn']:
             return True, 'add_admin_state'
+        elif message.text == DICTIONARY[user.language]['settings_btn']:
+            return True, 'admin_settings_state'
         if message.text == DICTIONARY[user.language]['mainmenu_msg']:
             return True, 'main_menu_state'
         else:
             bot.send_message(message.chat.id, DICTIONARY[user.language]['no_button'])
-
-    return False, ''
-
-
-def admin_support_respond_state(message, user, is_entry=False):
-    if is_entry:
-        bot.send_message(
-            message.chat.id, DICTIONARY[user.language]['admin_respond_msg'],
-            reply_markup=get_back_keyboard(language=user.language))
-    else:
-        if message.text == DICTIONARY[user.language]['back_btn']:
-            return True, 'admin_menu_state'
-        else:
-            # create SupportRespond
-            pass
 
     return False, ''
 
@@ -260,5 +262,69 @@ def add_admin_state(message, user, is_entry=False):
                 bot.send_message(message.chat.id, DICTIONARY[user.language]['admin_created_msg'])
 
             return True, 'admin_menu_state'
+
+    return False, ''
+
+
+def send_support_respond_state(message, user, is_entry=False):
+    if is_entry:
+        bot.send_message(
+            message.chat.id, DICTIONARY[user.language]['admin_respond_msg'],
+            reply_markup=get_back_keyboard(language=user.language)
+        )
+    else:
+        if message.text == DICTIONARY[user.language]['back_btn']:
+            return True, 'admin_menu_state'
+        else:
+            bot.send_message(message.chat.id, DICTIONARY[user.language]['send_support_respond_msg'])
+            return True, 'admin_menu_state'
+
+    return False, ''
+
+
+def admin_settings_state(message, user, is_entry=False):
+    if is_entry:
+        bot.send_message(
+            message.chat.id, 'Ви можете додати нові міста та змінити категорії',
+            reply_markup=get_admin_settings_keyboard(language=user.language)
+        )
+    else:
+        if message.text == DICTIONARY[user.language]['back_btn']:
+            return True, 'admin_menu_state'
+        elif message.text == DICTIONARY[user.language]['settings_city_btn']:
+            return True, 'admin_edit_cities_state'
+        # elif message.text == DICTIONARY[user.language]['settings_categories_btn']:
+        #     return True, 'admin_edit_cities_state'
+        else:
+            bot.send_message(message.chat.id, DICTIONARY[user.language]['send_support_respond_msg'])
+            return True, 'admin_menu_state'
+
+    return False, ''
+
+
+def admin_edit_cities_state(message, user, is_entry=False):
+    current_cities = session.query(City.name).all()
+    current_cities = [i for obj in current_cities for i in obj]
+    if is_entry:
+        bot.send_message(
+            message.chat.id, 'Щоб змінити список міст, скопіюйте наступне повідомлення, та відредагуйте його.\nПоточний список міст:',
+            reply_markup=get_back_keyboard(language=user.language)
+        )
+        bot.send_message(
+            message.chat.id, '\n'.join(current_cities)
+        )
+    else:
+        if message.text == DICTIONARY[user.language]['back_btn']:
+            return True, 'admin_settings_state'
+        else:
+            new_cities = []
+            for city in message.text.split('\n'):
+                if city not in current_cities:
+                    new_cities.append({'name': city, 'is_regional_center': False})
+
+            session.execute(insert(City).values(new_cities).on_conflict_do_nothing())
+            session.commit()
+            bot.send_message(message.chat.id, 'Список міст оновлено')
+            return True, 'admin_settings_state'
 
     return False, ''

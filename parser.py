@@ -104,4 +104,4 @@ def delete_events():
     return i
 
 
-# parser(URL)
+parser(URL)

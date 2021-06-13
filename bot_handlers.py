@@ -156,9 +156,9 @@ def callback_inline(call):
             )
         else:
             # create SupportResponse object
-            user.state = 'set_city_state'
+            user.state = 'send_support_respond_state'
             session.commit()
-
+            get_state_and_process(call.message, user, True)
     else:
         logger.warning(f"Invalid call.data: {call.data}\nUser: id={user.id} username={user.username}")
 
