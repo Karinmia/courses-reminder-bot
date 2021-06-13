@@ -112,7 +112,22 @@ def callback_inline(call):
             call.message.message_id,
             reply_markup=events_inline_keyboard(all_events_ids, user)
         )
-
+    elif call.data.startswith('unsubscribe_'):
+        event_id = call.data.replace("unsubscribe_", "")
+        # delete UserEvent object if it exists
+        sub_event = session.query(UserEvent).filter_by(event_id=event_id, user_id=user.id).first()
+        if sub_event:
+            session.delete(sub_event)
+        try:
+            bot.delete_message(call.message.chat.id, call.message.message_id)
+        except Exception as e:
+            logger.error(e, exc_info=True)
+        logger.error(f"Unsubscribed from event {event_id}")
+        bot.send_message(
+            call.message.chat.id,
+            DICTIONARY[user.language]['unsubscribed_msg']
+        )
+        session.commit()
     elif call.data.startswith('category_'):
         sub_name = call.data.replace("category_", "")
         subscription = session.query(UserSubscription).filter_by(name=sub_name, user_id=user.id).first()

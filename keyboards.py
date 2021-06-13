@@ -63,7 +63,6 @@ def events_inline_keyboard(events_ids=[], user=None, language='ua'):
     keyboard = InlineKeyboardMarkup(row_width=7)
 
     user_events_ids = [obj.event_id for obj in user.events.all()]
-
     buttons = [InlineKeyboardButton("<", callback_data=f"page_down")]
 
     for i, event_id in enumerate(events_ids):  # event_id is event's primary key (id)

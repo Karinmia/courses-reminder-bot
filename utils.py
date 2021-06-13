@@ -45,8 +45,8 @@ def get_support_requests():
 def format_events_as_message(events):
     message = ""
     if isinstance(events, list):
-        for event in events:
-            message = f"*{event.name}*\n{event.date}"
+        for i, event in enumerate(events):
+            message += f"*{i+1}. {event.name}*\n{event.date}"
             if event.price:
                 message += f", {event.price}\n"
             message += f"\n_{event.description}_\n[Подробнее..]({event.url})\n\n"
