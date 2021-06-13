@@ -187,4 +187,4 @@ class EventCategory(Base):
 
 
 # Base.metadata.drop_all(engine)
-# Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
