@@ -1,7 +1,8 @@
 import logging
+from time import sleep
 
 from bot_object import bot
-from config import ADMINS
+from config import ADMINS, BOT_TOKEN
 from database import session
 from enums import Roles
 from keyboards import *
@@ -164,12 +165,11 @@ def callback_inline(call):
 
 
 def start_bot_handler():
-    # bot.remove_webhook()
-    # sleep(1)
-    bot.polling(none_stop=True)
+    bot.remove_webhook()
+    sleep(2)
+    bot.set_webhook(url=f"https://course-helper-bot-kpi.herokuapp.com/{BOT_TOKEN}")
+    # bot.polling(none_stop=True)
 
 
 if __name__ == '__main__':
-    # bot.remove_webhook()
-    # sleep(1)
-    bot.polling(none_stop=True)
+    start_bot_handler()
