@@ -1,3 +1,4 @@
+import logging
 import os
 from time import sleep
 
@@ -7,7 +8,7 @@ from telebot import types, logger as telebot_logger
 from bot_handlers import bot
 from config import BOT_TOKEN, HOST
 
-telebot_logger.setLevel(telebot_logger.DEBUG)
+telebot_logger.setLevel(logging.DEBUG)
 
 server = Flask(__name__)
 
