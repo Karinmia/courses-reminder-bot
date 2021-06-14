@@ -7,6 +7,7 @@ DICTIONARY = {
         'settings_menu_msg': 'Здесь ты можешь изменить свой город и подписки на категории',
         'settings_categories_btn': 'Категории️',
         'settings_city_btn': 'Город️',
+        'remove_city_btn': 'Удалить город️',
         'get_events_btn': 'Список событий',
         'support_btn': 'Поддержка',
 
@@ -40,6 +41,7 @@ DICTIONARY = {
         'admin_respond_msg': 'Введите ваш ответ:',
         'send_support_respond_msg': 'Ваш ответ был отправлен пользователю',
         'add_admin_btn': 'Добавить админа',
+        'delete_admin_btn': 'Удалить админа',
         'add_admin_msg': 'Введите юзернейм админа:',
         'admin_created_msg': 'Админ успешно создан',
         'admin_exists_msg': 'Этот пользовтель уже является админом',
@@ -50,6 +52,7 @@ DICTIONARY = {
         'empty_events_list_msg': 'Мы не нашли событий по вашим критериям',
         'saved_settings_msg': "Настройки сохранены",
 
+        'see_details_btn': 'Подробнее..',
         'done_btn': "Готово",
         'skip_btn': 'Пропустить',
         'back_btn': '↩️ Назад',
@@ -66,6 +69,7 @@ DICTIONARY = {
         'settings_menu_msg': 'Тут ти можеш змінити своє місто і підписки на категорії',
         'settings_categories_btn': 'Категорії️',
         'settings_city_btn': 'Місто',
+        'remove_city_btn': 'Видалити місто',
         'get_events_btn': 'Список подій',
         'support_btn': 'Підтримка',
 
@@ -102,6 +106,7 @@ DICTIONARY = {
         'admin_respond_msg': 'Введiть вашу вiдповiдь:',
         'send_support_respond_msg': 'Відповідь була надіслана користувачу',
         'add_admin_btn': 'Додати адмiна',
+        'delete_admin_btn': 'Видалити адмiна',
         'add_admin_msg': 'Введiть юзернейм адмiна:',
         'admin_created_msg': 'Адмiн успiшно створений',
         'admin_exists_msg': 'Цей користувач вже є адмiном',
@@ -112,6 +117,7 @@ DICTIONARY = {
         'empty_events_list_msg': 'Ми не знайшли подій по вашим критеріям',
         'saved_settings_msg': "Налаштування оновлено",
 
+        'see_details_btn': 'Подробиці..',
         'done_btn': "Готово",
         'skip_btn': 'Пропустити',
         'back_btn': '↩️ Назад',

@@ -6,10 +6,7 @@ from languages import DICTIONARY
 
 def get_languages_keyboard():
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(
-        DICTIONARY['ua_lang_btn'],
-        DICTIONARY['ru_lang_btn']
-    )
+    keyboard.add(DICTIONARY['ua_lang_btn'], DICTIONARY['ru_lang_btn'])
     return keyboard
 
 
@@ -31,8 +28,9 @@ def get_settings_menu_keyboard(language='ua'):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(
         DICTIONARY[language]['settings_categories_btn'],
-        DICTIONARY[language]['settings_city_btn']
+        DICTIONARY[language]['settings_city_btn'],
     )
+    keyboard.add(DICTIONARY[language]['remove_city_btn'])
     keyboard.add(DICTIONARY[language]['back_btn'])
     return keyboard
 
@@ -42,7 +40,7 @@ def categories_inline_keyboard(categories=CATEGORIES, user=None, language='ua'):
 
     keyboard.add(InlineKeyboardButton(text=DICTIONARY[language]['done_btn'], callback_data="save_categories"))
 
-    # split categories list into smaller lists (with lenght = 3)
+    # split categories list into smaller lists (with length = 3)
     chunks = [categories[x:x + 3] for x in range(0, len(categories), 3)]
 
     subscriptions_name = [s.name for s in user.subscriptions.all()]
@@ -89,8 +87,8 @@ def get_unsubscribe_keyboard(obj_id, language='ua'):
 def get_admin_menu_keyboard(language='ua'):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(DICTIONARY[language]['support_btn'], DICTIONARY[language]['clear_events_btn'])
-    keyboard.add(DICTIONARY[language]['add_admin_btn'], DICTIONARY[language]['settings_btn'])
-    keyboard.add(DICTIONARY[language]['mainmenu_msg'])
+    keyboard.add(DICTIONARY[language]['add_admin_btn'], DICTIONARY[language]['delete_admin_btn'])
+    keyboard.add(DICTIONARY[language]['settings_btn'], DICTIONARY[language]['mainmenu_msg'])
     return keyboard
 
 

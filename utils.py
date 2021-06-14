@@ -2,6 +2,7 @@ from datetime import datetime
 from logging import Logger
 
 from database import session
+from languages import DICTIONARY
 from models import User, UserSubscription, Event, UserEvent, SupportRequest
 
 
@@ -42,20 +43,20 @@ def get_support_requests():
 #     message = f""
 
 
-def format_events_as_message(events):
+def format_events_as_message(events, user_lang='ua'):
     message = ""
     if isinstance(events, list):
         for i, event in enumerate(events):
             message += f"*{i+1}. {event.name}*\n{event.date}"
             if event.price:
                 message += f", {event.price}\n"
-            message += f"\n_{event.description}_\n[Подробнее..]({event.url})\n\n"
+            message += f"\n_{event.description}_\n[{DICTIONARY[user_lang]['see_details_btn']}]({event.url})\n\n"
     else:
         event = events
         message = f"*{event.name}*\n{event.date}"
         if event.price:
             message += f", {event.price}\n"
-        message += f"\n_{event.description}_\n[Подробнее..]({event.url})\n\n"
+        message += f"\n_{event.description}_\n[{DICTIONARY[user_lang]['see_details_btn']}]({event.url})\n\n"
 
     return message
 

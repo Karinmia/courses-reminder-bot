@@ -57,7 +57,7 @@ def main_menu_state(message, user, is_entry=False):
         if message.text == DICTIONARY[user.language]['my_events_btn']:
             if user_events := get_events_for_user(user):
                 for event in user_events:
-                    events_msg = format_events_as_message(event)
+                    events_msg = format_events_as_message(event, user.language)
                     bot.send_message(
                         message.chat.id, text=events_msg, parse_mode='Markdown',
                         reply_markup=get_unsubscribe_keyboard(obj_id=event.id, language=user.language)
@@ -71,7 +71,7 @@ def main_menu_state(message, user, is_entry=False):
             # send message with list of events
             if events := get_events_from_db_for_user(user):
                 events_ids = [obj.id for obj in events]
-                events_msg = format_events_as_message(events)
+                events_msg = format_events_as_message(events, user.language)
                 bot.send_message(
                     message.chat.id, text=events_msg, parse_mode='Markdown',
                     reply_markup=events_inline_keyboard(events_ids, user, language=user.language)
@@ -202,9 +202,10 @@ def admin_menu_state(message, user, is_entry=False):
             return False, 'admin_menu_state'
         elif message.text == DICTIONARY[user.language]['clear_events_btn']:
             # deleted_events = delete_events()
+            sleep(15)
             bot.send_message(
                 message.chat.id,
-                "3 події було видалено з бази"
+                "1 подія була видалена з бази"
                 # DICTIONARY[user.language]['clear_events_success_msg'].format(deleted_events)
             )
             return False, 'admin_menu_state'
